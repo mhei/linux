@@ -13,8 +13,8 @@
 #include "imx28-tqma28.dtsi"
 
 / {
-	model = "TQ Systems TQMa28 on MBa28";
-	compatible = "tqs, mba28", "tqs,tqma28", "fsl,imx28";
+	model = "TQ TQMa28 on MBa28";
+	compatible = "tq,mba28", "tq,tqma28", "fsl,imx28";
 
 	apb@80000000 {
 		apbh@80000000 {

@@ -341,7 +341,7 @@ static void __init m28cu3_init(void)
 	update_fec_mac_prop(OUI_DENX);
 }
 
-static void __init tqma28_init(void)
+static void __init mba28x_init(void)
 {
 	unsigned long oc;
 	struct device_node *np;
@@ -498,8 +498,10 @@ static void __init mxs_machine_init(void)
 		crystalfontz_init();
 	else if (of_machine_is_compatible("msr,m28cu3"))
 		m28cu3_init();
-	else if (of_machine_is_compatible("tqs,tqma28"))
-		tqma28_init();
+	else if (of_machine_is_compatible("tq,mba28") ||
+	         of_machine_is_compatible("tq,mba28l-aa") ||
+	         of_machine_is_compatible("tq,mba28l-ab"))
+		mba28x_init();
 
 	of_platform_populate(NULL, of_default_bus_match_table,
 			     NULL, parent);
