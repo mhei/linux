@@ -1,0 +1,120 @@
+/*
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+#include "imx28.dtsi"
+
+/ {
+	memory {
+		reg = <0x40000000 0x08000000>;
+	};
+
+	apb@80000000 {
+		apbh@80000000 {
+			ssp0: ssp@80010000 {
+				compatible = "fsl,imx28-mmc";
+				pinctrl-names = "default";
+				pinctrl-0 = <&mmc0_8bit_pins_b
+						&mmc0_cmd_cfg
+						&mmc0_sck_cfg>;
+				bus-width = <8>;
+				non-removable;
+				vmmc-supply = <&reg_vddio_sd0>;
+				status = "okay";
+			};
+
+			pinctrl@80018000 {
+				mmc0_8bit_pins_b: mmc0-8bit@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_SSP0_DATA0__SSP0_D0
+						MX28_PAD_SSP0_DATA1__SSP0_D1
+						MX28_PAD_SSP0_DATA2__SSP0_D2
+						MX28_PAD_SSP0_DATA3__SSP0_D3
+						MX28_PAD_SSP0_DATA4__SSP0_D4
+						MX28_PAD_SSP0_DATA5__SSP0_D5
+						MX28_PAD_SSP0_DATA6__SSP0_D6
+						MX28_PAD_SSP0_DATA7__SSP0_D7
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				mmc0_cmd_cfg: mmc0-cmd-cfg {
+					fsl,pinmux-ids = <
+						MX28_PAD_SSP0_CMD__SSP0_CMD
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				mmc0_sck_cfg: mmc0-sck-cfg {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+				};
+			};
+		};
+
+		apbx@80040000 {
+			i2c0: i2c@80058000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&i2c0_pins_a>;
+				status = "okay";
+
+				/* boot eeprom on tqma28.0200 */
+				24c32@50 {
+					compatible = "at,24c32";
+					reg = <0x50>;
+					pagesize = <8>;
+					read-only;
+				};
+			};
+
+			i2c1: i2c@8005a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&i2c1_pins_a>;
+				status = "okay";
+
+				lm73@49 {
+					compatible = "national,lm73";
+					reg = <0x49>;
+				};
+
+				24c64@50 {
+					compatible = "at,24c64";
+					reg = <0x50>;
+					pagesize = <32>;
+				};
+			};
+		};
+	};
+
+	regulators {
+		compatible = "simple-bus";
+
+		reg_3p3v: 3p3v {
+			compatible = "regulator-fixed";
+			regulator-name = "3P3V";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+
+		reg_vddio_sd0: vddio-sd0 {
+			compatible = "regulator-fixed";
+			regulator-name = "vddio-sd0";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-always-on;
+		};
+	};
+};
