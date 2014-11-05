@@ -1,0 +1,351 @@
+/*
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+#include "imx28-tqma28.dtsi"
+
+/ {
+	model = "TQ TQMa28 on MBa28";
+	compatible = "tq,mba28", "tq,tqma28", "fsl,imx28";
+
+	apb@80000000 {
+		apbh@80000000 {
+			ssp1: ssp@80012000 {
+				compatible = "fsl,imx28-mmc";
+				pinctrl-names = "default";
+				pinctrl-0 = <&mmc1_4bit_pins_a
+						&mmc1_cd_cfg
+						&mmc1_sck_cfg>;
+				bus-width = <4>;
+				wp-gpios = <&gpio0 28 0>;
+				vmmc-supply = <&reg_vddio_sd0>;
+				status = "okay";
+			};
+
+			pinctrl@80018000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&hog_pins_a>;
+
+				hog_pins_a: hog-gpios@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_ENET0_RX_CLK__GPIO_4_13
+						MX28_PAD_LCD_RESET__GPIO_3_30
+						MX28_PAD_AUART2_RX__GPIO_3_8
+						MX28_PAD_AUART2_TX__GPIO_3_9
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				edt_ft5x06_pins: edt-ft5x06-pins {
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_D04__GPIO_0_4 /* IRQ */
+						MX28_PAD_GPMI_D06__GPIO_0_6 /* RESET */
+						MX28_PAD_GPMI_D07__GPIO_0_7 /* WAKE */
+					>;
+					fsl,drive-strength = <MXS_DRIVE_4mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				i2c1_pins_b: i2c1@1 {
+					reg = <1>;
+					fsl,pinmux-ids = <
+						MX28_PAD_AUART2_CTS__I2C1_SCL
+						MX28_PAD_AUART2_RTS__I2C1_SDA
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				lcdif_24bit_pins_a: lcdif-24bit@0 {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+				};
+
+				lcdif_pins_mba28: lcdif-evk@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_LCD_VSYNC__LCD_VSYNC
+						MX28_PAD_LCD_HSYNC__LCD_HSYNC
+						MX28_PAD_LCD_DOTCLK__LCD_DOTCLK
+						MX28_PAD_LCD_ENABLE__LCD_ENABLE
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				mmc1_4bit_pins_a: mmc1-4bit@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_D00__SSP1_D0
+						MX28_PAD_GPMI_D01__SSP1_D1
+						MX28_PAD_GPMI_D02__SSP1_D2
+						MX28_PAD_GPMI_D03__SSP1_D3
+						MX28_PAD_GPMI_RDY0__SSP1_CARD_DETECT
+						MX28_PAD_GPMI_RDY1__SSP1_CMD
+						MX28_PAD_GPMI_WRN__SSP1_SCK
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				mmc1_cd_cfg: mmc1-cd-cfg {
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_RDY0__SSP1_CARD_DETECT
+					>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				mmc1_sck_cfg: mmc1-sck-cfg {
+					fsl,pinmux-ids = <
+						MX28_PAD_GPMI_WRN__SSP1_SCK
+					>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				pwm2_pins_a: pwm2@0 {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,pull-up = <MXS_PULL_ENABLE>;
+				};
+
+				auart0_pins_a: auart0@0 {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+				};
+
+				auart3_pins_a: auart3@0 {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+				};
+			};
+
+			lcdif@80030000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&lcdif_24bit_pins_a
+							 &lcdif_pins_mba28>;
+				display = <&display>;
+				status = "okay";
+
+				display: display {
+					bits-per-pixel = <16>;
+					bus-width = <18>;
+
+					display-timings {
+						native-mode = <&ET0700G0DH6>;
+						ET0700G0DH6: timing0 {
+							clock-frequency = <33260000>;
+							hactive = <800>;
+							vactive = <480>;
+							hback-porch = <0>;
+							hfront-porch = <256>;
+							vback-porch = <0>;
+							vfront-porch = <45>;
+							hsync-len = <10>;
+							vsync-len = <10>;
+							hsync-active = <0>;
+							vsync-active = <0>;
+							de-active = <1>;
+							pixelclk-active = <1>;
+						};
+					};
+				};
+			};
+
+			can0: can@80032000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can0_pins_a>;
+				status = "okay";
+			};
+
+			can1: can@80034000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can1_pins_a>;
+				status = "okay";
+			};
+		};
+
+		apbx@80040000 {
+			lradc@80050000 {
+				fsl,lradc-touchscreen-wires = <4>;
+				status = "okay";
+			};
+
+			saif0: saif@80042000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&saif0_pins_a>;
+				status = "okay";
+			};
+
+			saif1: saif@80046000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&saif1_pins_a>;
+				fsl,saif-master = <&saif0>;
+				status = "okay";
+			};
+
+			i2c1: i2c@8005a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&i2c1_pins_b>;
+				status = "okay";
+
+				sgtl5000: codec@0a {
+					compatible = "fsl,sgtl5000";
+					reg = <0x0a>;
+					clocks = <&saif0>;
+					VDDA-supply = <&reg_3p3v>;
+					VDDIO-supply = <&reg_3p3v>;
+					VDDD-supply = <&reg_3p3v>;
+				};
+
+				gpioext0: pca9554@20 {
+					compatible = "pca9554";
+					reg = <0x20>;
+					#gpio-cells = <2>;
+					gpio-controller;
+				};
+
+				gpioext1: pca9554@21 {
+					compatible = "pca9554";
+					reg = <0x21>;
+					#gpio-cells = <2>;
+					gpio-controller;
+				};
+
+				polytouch: edt-ft5x04@38 {
+					compatible = "edt,edt-ft5406";
+					reg = <0x38>;
+					pinctrl-names = "default";
+					pinctrl-0 = <&edt_ft5x06_pins>;
+					interrupt-parent = <&gpio0>;
+					interrupts = <4>;
+					reset-gpios = <&gpio0 6 1>;
+					wake-gpios = <&gpio0 7 0>;
+				};
+
+				lm73@4a {
+					compatible = "national,lm73";
+					reg = <0x4a>;
+				};
+			};
+
+			pwm: pwm@80064000 {
+				compatible = "fsl,imx28-pwm", "fsl,mxs-pwm", "fsl,imx23-pwm";
+				pinctrl-names = "default";
+				pinctrl-0 = <&pwm2_pins_a>;
+				status = "okay";
+			};
+
+			duart: serial@80074000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&duart_pins_a>;
+				status = "okay";
+			};
+
+			auart0: serial@8006a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart0_pins_a>;
+				status = "okay";
+			};
+
+			auart3: serial@80070000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart3_pins_a>;
+				status = "okay";
+			};
+
+			usbphy0: usbphy@8007c000 {
+				status = "okay";
+			};
+
+			usbphy1: usbphy@8007e000 {
+				status = "okay";
+			};
+		};
+	};
+
+	ahb@80080000 {
+		usb0: usb@80080000 {
+			vbus-supply = <&reg_usb0_vbus>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usbphy0_pins_a>;
+			dr_mode = "host";
+			status = "okay";
+		};
+
+		usb1: usb@80090000 {
+			vbus-supply = <&reg_usb1_vbus>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&usbphy1_pins_a>;
+			status = "okay";
+		};
+
+		mac0: ethernet@800f0000 {
+			phy-mode = "rmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac0_pins_a>;
+			phy-reset-gpios = <&gpio4 13 0>;
+			phy-reset-duration = <100>;
+			status = "okay";
+		};
+
+		mac1: ethernet@800f4000 {
+			phy-mode = "rmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac1_pins_a>;
+			phy-reset-gpios = <&gpio4 13 0>;
+			phy-reset-duration = <100>;
+			status = "okay";
+		};
+	};
+
+	regulators {
+		compatible = "simple-bus";
+
+		reg_usb0_vbus: usb0_vbus {
+			compatible = "regulator-fixed";
+			regulator-name = "usb0_vbus";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio3 9 0>;
+			enable-active-high;
+		};
+
+		reg_usb1_vbus: usb1_vbus {
+			compatible = "regulator-fixed";
+			regulator-name = "usb1_vbus";
+			regulator-min-microvolt = <5000000>;
+			regulator-max-microvolt = <5000000>;
+			gpio = <&gpio3 8 0>;
+			enable-active-high;
+		};
+	};
+
+	sound {
+		compatible = "fsl,imx28-evk-sgtl5000",
+			     "fsl,mxs-audio-sgtl5000";
+		model = "imx28-evk-sgtl5000";
+		saif-controllers = <&saif0 &saif1>;
+		audio-codec = <&sgtl5000>;
+	};
+
+	backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 2 5000000>;
+		brightness-levels = <0 4 8 16 32 64 128 255>;
+		default-brightness-level = <6>;
+		power-supply = <&reg_3p3v>;
+	};
+};

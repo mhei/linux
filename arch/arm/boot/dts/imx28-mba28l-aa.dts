@@ -1,0 +1,100 @@
+/*
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+#include "imx28-mba28l-ab.dts"
+
+/ {
+	model = "TQ TQMa28L-AA on MBa28";
+	compatible = "tq,mba28l-aa", "tq,tqma28l", "fsl,imx28";
+
+	apb@80000000 {
+		apbh@80000000 {
+			pinctrl@80018000 {
+				hog_pins_aa: hog-gpios@1 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_AUART3_CTS__GPIO_3_14
+						MX28_PAD_AUART3_RTS__GPIO_3_15
+						MX28_PAD_ENET0_RX_CLK__GPIO_4_13
+						MX28_PAD_ENET0_TX_CLK__GPIO_4_5
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				auart3_2pins_b: auart3-2pins@1 {
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+				};
+
+				auart4_pins_a: auart4@0 {
+					reg = <0>;
+					fsl,pinmux-ids = <
+						MX28_PAD_SSP3_SCK__AUART4_TX
+						MX28_PAD_SSP3_MOSI__AUART4_RX
+						MX28_PAD_SSP3_MISO__AUART4_RTS
+						MX28_PAD_SSP3_SS0__AUART4_CTS
+					>;
+					fsl,drive-strength = <MXS_DRIVE_8mA>;
+					fsl,voltage = <MXS_VOLTAGE_HIGH>;
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+
+				i2c1_pins_a: i2c1@0 {
+					fsl,pull-up = <MXS_PULL_DISABLE>;
+				};
+			};
+
+			can0: can@80032000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can0_pins_a>;
+				status = "okay";
+			};
+
+			can1: can@80034000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&can1_pins_a>;
+				status = "okay";
+			};
+		};
+
+		apbx@80040000 {
+			i2c1: i2c@8005a000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&i2c1_pins_a>;
+				status = "okay";
+			};
+
+			auart3: serial@80070000 {		/* AUART1 port */
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart3_2pins_b>;
+				status = "okay";
+			};
+
+			auart4: serial@80072000 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&auart4_pins_a>;
+				status = "okay";
+			};
+		};
+	};
+
+	ahb@80080000 {
+		mac1: ethernet@800f4000 {
+			phy-mode = "rmii";
+			pinctrl-names = "default";
+			pinctrl-0 = <&mac1_pins_a>;
+			phy-reset-gpios = <&gpio0 16 0>;
+			phy-reset-duration = <100>;
+			status = "okay";
+		};
+	};
+};

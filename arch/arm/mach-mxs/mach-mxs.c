@@ -157,6 +157,7 @@ enum mac_oui {
 	OUI_FSL,
 	OUI_DENX,
 	OUI_CRYSTALFONTZ,
+	OUI_TQ,
 };
 
 static void __init update_fec_mac_prop(enum mac_oui oui)
@@ -210,6 +211,11 @@ static void __init update_fec_mac_prop(enum mac_oui oui)
 			macaddr[0] = 0x58;
 			macaddr[1] = 0xb9;
 			macaddr[2] = 0xe1;
+			break;
+		case OUI_TQ:
+			macaddr[0] = 0x00;
+			macaddr[1] = 0xd0;
+			macaddr[2] = 0x93;
 			break;
 		}
 		val = ocotp[i];
@@ -333,6 +339,34 @@ static void __init crystalfontz_init(void)
 static void __init m28cu3_init(void)
 {
 	update_fec_mac_prop(OUI_DENX);
+}
+
+static void __init mba28x_init(void)
+{
+	unsigned long oc;
+	struct device_node *np;
+	void __iomem *addr;
+	struct clk *ref_pix, *lcdif_sel;
+
+	update_fec_mac_prop(OUI_TQ);
+
+	lcdif_sel = clk_get_sys(NULL, "lcdif_sel");
+	ref_pix = clk_get_sys(NULL, "ref_pix");
+	if (IS_ERR(lcdif_sel) || IS_ERR(ref_pix))
+		pr_err("Error on selecting LCD-IF clock.\n");
+	else
+		clk_set_parent(lcdif_sel, ref_pix);
+
+	/*
+	 * enable usb overcurrent detection logic in MX28 HW_DIGCTL_CTRL_SET
+	 * and set overcurrent polarity to low active
+	 */
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx28-digctl");
+	addr = of_iomap(np, 0);
+	WARN_ON(!addr);
+
+	oc = (0xF << 21);
+	__mxs_setl(oc, addr);
 }
 
 static const char __init *mxs_get_soc_id(void)
@@ -464,6 +498,10 @@ static void __init mxs_machine_init(void)
 		crystalfontz_init();
 	else if (of_machine_is_compatible("msr,m28cu3"))
 		m28cu3_init();
+	else if (of_machine_is_compatible("tq,mba28") ||
+	         of_machine_is_compatible("tq,mba28l-aa") ||
+	         of_machine_is_compatible("tq,mba28l-ab"))
+		mba28x_init();
 
 	of_platform_populate(NULL, of_default_bus_match_table,
 			     NULL, parent);
